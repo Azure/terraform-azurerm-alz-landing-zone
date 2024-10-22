@@ -12,11 +12,11 @@ resource "azapi_resource" "rg_lock" {
   type      = "Microsoft.Authorization/locks@2020-05-01"
   parent_id = one(azapi_resource.rg).id
   name      = coalesce(var.resource_group_lock_name, "lock-${one(azapi_resource.rg).name}")
-  body = jsonencode({
+  body = {
     properties = {
       level = "CanNotDelete"
     }
-  })
+  }
   depends_on = [
     azapi_resource.rg,
     azapi_resource.umi,
@@ -33,7 +33,7 @@ resource "azapi_resource" "umi" {
   type      = "Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31"
   name      = var.name
   parent_id = var.resource_group_creation_enabled ? one(azapi_resource.rg).id : "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}"
-  body      = jsonencode({})
+  body      = {}
   location  = var.location
   tags      = var.tags
   response_export_values = [
@@ -49,13 +49,13 @@ resource "azapi_resource" "umi_federated_credential_github_branch" {
   name      = coalesce(each.value.name, "github-${each.value.organization}-${each.value.repository}-branch-${each.value.value}")
   parent_id = azapi_resource.umi.id
   locks     = [azapi_resource.umi.id] # Concurrent Federated Identity Credentials writes under the same managed identity are not supported
-  body = jsonencode({
+  body = {
     properties = {
       audiences = ["api://AzureADTokenExchange"]
       issuer    = "https://token.actions.githubusercontent.com"
       subject   = "repo:${each.value.organization}/${each.value.repository}:ref:refs/heads/${each.value.value}"
     }
-  })
+  }
 }
 
 resource "azapi_resource" "umi_federated_credential_github_tag" {
@@ -79,13 +79,13 @@ resource "azapi_resource" "umi_federated_credential_github_environment" {
   name      = coalesce(each.value.name, "github-${each.value.organization}-${each.value.repository}-environment-${each.value.value}")
   parent_id = azapi_resource.umi.id
   locks     = [azapi_resource.umi.id] # Concurrent Federated Identity Credentials writes under the same managed identity are not supported
-  body = jsonencode({
+  body = {
     properties = {
       audiences = ["api://AzureADTokenExchange"]
       issuer    = "https://token.actions.githubusercontent.com"
       subject   = "repo:${each.value.organization}/${each.value.repository}:environment:${each.value.value}"
     }
-  })
+  }
 }
 
 resource "azapi_resource" "umi_federated_credential_github_pull_request" {
@@ -94,13 +94,13 @@ resource "azapi_resource" "umi_federated_credential_github_pull_request" {
   name      = coalesce(each.value.name, "github-${each.value.organization}-${each.value.repository}-pull-request")
   parent_id = azapi_resource.umi.id
   locks     = [azapi_resource.umi.id] # Concurrent Federated Identity Credentials writes under the same managed identity are not supported
-  body = jsonencode({
+  body = {
     properties = {
       audiences = ["api://AzureADTokenExchange"]
       issuer    = "https://token.actions.githubusercontent.com"
       subject   = "repo:${each.value.organization}/${each.value.repository}:pull_request"
     }
-  })
+  }
 }
 
 resource "azapi_resource" "umi_federated_credential_terraform_cloud" {
@@ -109,13 +109,13 @@ resource "azapi_resource" "umi_federated_credential_terraform_cloud" {
   name      = coalesce(each.value.name, "terraformcloud-${each.value.organization}-${each.value.project}-${each.value.workspace}-${each.value.run_phase}")
   parent_id = azapi_resource.umi.id
   locks     = [azapi_resource.umi.id] # Concurrent Federated Identity Credentials writes under the same managed identity are not supported
-  body = jsonencode({
+  body = {
     properties = {
       audiences = ["api://AzureADTokenExchange"]
       issuer    = "https://app.terraform.io"
       subject   = "organization:${each.value.organization}:project:${each.value.project}:workspace:${each.value.workspace}:run_phase:${each.value.run_phase}"
     }
-  })
+  }
 }
 
 resource "azapi_resource" "umi_federated_credential_advanced" {
@@ -124,11 +124,11 @@ resource "azapi_resource" "umi_federated_credential_advanced" {
   name      = each.value.name
   parent_id = azapi_resource.umi.id
   locks     = [azapi_resource.umi.id] # Concurrent Federated Identity Credentials writes under the same managed identity are not supported
-  body = jsonencode({
+  body = {
     properties = {
       audiences = each.value.audiences
       issuer    = each.value.issuer_url
       subject   = each.value.subject_identifier
     }
-  })
+  }
 }

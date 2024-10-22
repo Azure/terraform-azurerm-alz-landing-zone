@@ -2,7 +2,7 @@ resource "azapi_resource" "budget" {
   type      = "Microsoft.Consumption/budgets@2021-10-01"
   name      = var.budget_name
   parent_id = var.budget_scope
-  body = jsonencode({
+  body = {
     properties = {
       amount        = var.budget_amount
       category      = "Cost"
@@ -13,7 +13,5 @@ resource "azapi_resource" "budget" {
         startDate = var.budget_time_period.start_date
       }
     }
-  })
+  }
 }
-
-

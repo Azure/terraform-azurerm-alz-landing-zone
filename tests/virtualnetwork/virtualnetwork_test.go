@@ -17,45 +17,6 @@ const (
 )
 
 // TestVirtualNetworkCreateValid tests the creation of a plan that
-// creates two virtual networks in the specified resource groups.
-func TestVirtualNetworkCreateValid(t *testing.T) {
-	t.Parallel()
-
-	v := getMockInputVariables()
-	test, err := setuptest.Dirs(moduleDir, "").WithVars(v).InitPlanShowWithPrepFunc(t, utils.AzureRmAndRequiredProviders)
-	require.NoError(t, err)
-	defer test.Cleanup()
-
-	resources := []string{
-		"azapi_resource.rg[\"primary-rg\"]",
-		"azapi_resource.rg[\"secondary-rg\"]",
-		"azapi_resource.vnet[\"primary\"]",
-		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
-		"azapi_resource.rg_lock[\"primary-rg\"]",
-		"azapi_resource.rg_lock[\"secondary-rg\"]",
-	}
-	check.InPlan(test.PlanStruct).NumberOfResourcesEquals(len(resources)).ErrorIsNilFatal(t)
-
-	for _, r := range resources {
-		check.InPlan(test.PlanStruct).That(r).Exists().ErrorIsNil(t)
-	}
-
-	// Loop through each virtual network and check the values
-	vns := v["virtual_networks"].(map[string]map[string]any)
-	for k, v := range vns {
-		rgres := fmt.Sprintf("azapi_resource.rg[\"%s-rg\"]", k)
-		vnetres := fmt.Sprintf("azapi_resource.vnet[\"%s\"]", k)
-		check.InPlan(test.PlanStruct).That(rgres).Key("name").HasValue(v["resource_group_name"]).ErrorIsNil(t)
-		check.InPlan(test.PlanStruct).That(rgres).Key("location").HasValue(v["location"]).ErrorIsNil(t)
-		check.InPlan(test.PlanStruct).That(vnetres).Key("name").HasValue(v["name"]).ErrorIsNil(t)
-		check.InPlan(test.PlanStruct).That(vnetres).Key("location").HasValue(v["location"]).ErrorIsNil(t)
-		check.InPlan(test.PlanStruct).That(vnetres).Key("body").Query("properties.addressSpace.addressPrefixes").HasValue(v["address_space"]).ErrorIsNil(t)
-	}
-}
-
-// TestVirtualNetworkCreateValid tests the creation of a plan that
 // creates two virtual networks in the specified resource groups with custom DNS servers.
 func TestVirtualNetworkCreateValidWithCustomDns(t *testing.T) {
 	t.Parallel()

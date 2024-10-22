@@ -29,4 +29,5 @@ module "lz_vending" {
 ```
 DESCRIPTION
   default     = false
+  nullable    = false
 }

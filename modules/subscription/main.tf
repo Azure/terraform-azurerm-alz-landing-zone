@@ -23,7 +23,7 @@ resource "azapi_resource" "subscription" {
   name      = var.subscription_alias_name
   parent_id = "/"
 
-  body = jsonencode({
+  body = {
     properties = {
       displayName  = var.subscription_display_name
       workload     = var.subscription_workload
@@ -33,7 +33,7 @@ resource "azapi_resource" "subscription" {
         tags              = var.subscription_tags
       }
     }
-  })
+  }
   response_export_values = ["properties.subscriptionId"]
   lifecycle {
     ignore_changes = [

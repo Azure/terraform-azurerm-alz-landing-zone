@@ -56,9 +56,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        azapi_version: ['latest', '1.11.0']
-        azurerm_version: ['latest', '3.7.0']
-        terraform_version: ['latest', '1.4.0']
+        azapi_version: ['latest', '1.14.0']
+        azurerm_version: ['latest', '3.107.0']
+        terraform_version: ['latest', '1.6.0']
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -72,20 +72,7 @@ jobs:
           terraform_version: ${{ matrix.terraform_version }}
           terraform_wrapper: false
 
-      - name: Setup go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: tests/go.mod
-          cache-dependency-path: tests/go.sum
-
-      - name: Set GOMAXPROCS to 2 * number of cores
-        run: |
-          CORES="$(grep -Pc '^processor\t' /proc/cpuinfo)"
-          ((DOUBLE=CORES*2))
-          echo "Setting GOMAXPROCS to $DOUBLE"
-          echo "GOMAXPROCS=$DOUBLE" >> "$GITHUB_ENV"
-
-      - name: Go test
+      - name: Terraform test
         run: make TESTARGS='-v' TESTFILTER='${{ github.event.inputs.test_filter }}' test
         env:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}

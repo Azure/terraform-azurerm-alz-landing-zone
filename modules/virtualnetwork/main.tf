@@ -16,14 +16,13 @@ resource "azapi_resource" "rg_lock" {
   type      = "Microsoft.Authorization/locks@2017-04-01"
   parent_id = azapi_resource.rg[each.key].id
   name      = coalesce(each.value.lock_name, substr("lock-${each.key}", 0, 90))
-  body = jsonencode({
+  body = {
     properties = {
       level = "CanNotDelete"
     }
-  })
+  }
   depends_on = [
     azapi_resource.vnet,
-    azapi_update_resource.vnet,
     azapi_resource.peering_hub_outbound,
     azapi_resource.peering_hub_inbound,
     azapi_resource.peering_mesh,
@@ -32,15 +31,14 @@ resource "azapi_resource" "rg_lock" {
 }
 
 # azapi_resource.vnet are the virtual networks that will be created
-# lifecycle ignore changes to the body to prevent subnets being deleted
-# see #45 for more information
 resource "azapi_resource" "vnet" {
   for_each  = var.virtual_networks
   parent_id = "${local.subscription_resource_id}/resourceGroups/${each.value.resource_group_name}"
-  type      = "Microsoft.Network/virtualNetworks@2021-08-01"
+  type      = "Microsoft.Network/virtualNetworks@2024-01-01"
   name      = each.value.name
   location  = coalesce(each.value.location, var.location)
-  body = jsonencode({
+  tags      = each.value.tags
+  body = {
     properties = merge(
       {
         addressSpace = {
@@ -49,6 +47,7 @@ resource "azapi_resource" "vnet" {
         dhcpOptions = {
           dnsServers = each.value.dns_servers
         }
+        subnets = null
       },
       each.value.ddos_protection_enabled ? {
         ddosProtectionPlan = {
@@ -57,42 +56,12 @@ resource "azapi_resource" "vnet" {
         enableDdosProtection = true
       } : null
     )
-  })
-  tags = each.value.tags
-  lifecycle {
-    ignore_changes = [body, tags]
   }
+  response_export_values = ["*"]
+
   depends_on = [
     azapi_resource.rg,
   ]
-}
-
-# azapi_update_resource.vnet are the virtual networks that will be created
-# This is a workaround for #45 to allow updates to the virtual network
-# without deleting the subnets created elsewhere
-resource "azapi_update_resource" "vnet" {
-  for_each    = var.virtual_networks
-  resource_id = azapi_resource.vnet[each.key].id
-  type        = "Microsoft.Network/virtualNetworks@2021-08-01"
-  body = jsonencode({
-    properties = merge(
-      {
-        addressSpace = {
-          addressPrefixes = each.value.address_space
-        }
-        dhcpOptions = {
-          dnsServers = each.value.dns_servers
-        }
-      },
-      each.value.ddos_protection_enabled ? {
-        ddosProtectionPlan = {
-          id = each.value.ddos_protection_plan_id
-        }
-        enableDdosProtection = true
-      } : null
-    )
-    tags = each.value.tags
-  })
 }
 
 # azapi_resource.peering_hub_outbound creates one-way peering from the spoke to the supplied hub virtual network.
@@ -161,7 +130,7 @@ resource "azapi_resource" "vhubconnection" {
   type      = "Microsoft.Network/virtualHubs/hubVirtualNetworkConnections@2022-07-01"
   parent_id = each.value.vwan_hub_resource_id
   name      = coalesce(each.value.vwan_connection_name, "vhc-${uuidv5("url", azapi_resource.vnet[each.key].id)}")
-  body = jsonencode({
+  body = {
     properties = merge({
       enableInternetSecurity = each.value.vwan_security_configuration.secure_internet_traffic
       remoteVirtualNetwork = {
@@ -180,6 +149,5 @@ resource "azapi_resource" "vhubconnection" {
           }
         }
     })
-  })
-  ignore_body_changes = each.value.vwan_security_configuration.routing_intent_enabled ? ["properties.routingConfiguration"] : []
+  }
 }

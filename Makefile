@@ -36,7 +36,8 @@ lint:
 	cd tests && golangci-lint run
 
 test: fmtcheck
-	cd tests && go test $(TEST) $(TESTARGS) -run ^Test$(TESTFILTER) -timeout=$(TESTTIMEOUT)
+	terraform test
+	if [ -d "modules" ]; then	for dir in modules/*; do if [ -d "$$dir" ]; then echo "==> Testing $$dir"; cd $$dir; terraform test; echo; cd - >/dev/null; fi;	done; fi
 
 testdeploy: fmtcheck
 	cd tests &&	TERRATEST_DEPLOY=1 go test $(TEST) $(TESTARGS) -run ^TestDeploy$(TESTFILTER) -timeout $(TESTTIMEOUT)
