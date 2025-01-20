@@ -29,9 +29,9 @@ module "roleassignment" {
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.3.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.8)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.7.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
 
 ## Modules
 
@@ -92,13 +92,13 @@ The following resources are used by this module:
 
 The following outputs are exported:
 
-### <a name="output_role_assignment_id"></a> [role\_assignment\_id](#output\_role\_assignment\_id)
-
-Description: The Azure resource id of the created role assignment.
-
 ### <a name="output_role_assignment_name"></a> [role\_assignment\_name](#output\_role\_assignment\_name)
 
 Description: The Azure name (uuid) of the created role assignment.
+
+### <a name="output_role_assignment_resource_id"></a> [role\_assignment\_resource\_id](#output\_role\_assignment\_resource\_id)
+
+Description: The Azure resource id of the created role assignment.
 
 <!-- markdownlint-enable -->
 <!-- END_TF_DOCS -->

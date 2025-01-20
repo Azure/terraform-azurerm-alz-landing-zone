@@ -3,7 +3,6 @@
 module "budget" {
   source = "./modules/budget"
   depends_on = [
-    module.resourcegroup_networkwatcherrg,
     module.resourcegroup,
     module.subscription,
     module.usermanagedidentity,

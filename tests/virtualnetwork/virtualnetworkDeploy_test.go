@@ -34,8 +34,6 @@ func TestDeployVirtualNetworkValid(t *testing.T) {
 	resources := []string{
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 	}
 	for _, r := range resources {
 		check.InPlan(test.PlanStruct).That(r).Exists().ErrorIsNil(t)
@@ -72,8 +70,6 @@ func TestDeployVirtualNetworkValidCustomDns(t *testing.T) {
 	resources := []string{
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 	}
 	for _, r := range resources {
 		check.InPlan(test.PlanStruct).That(r).Exists().ErrorIsNil(t)
@@ -117,8 +113,6 @@ func TestDeployVirtualNetworkValidVnetPeering(t *testing.T) {
 		"module.virtualnetwork_test.azapi_resource.peering_hub_inbound[\"secondary\"]",
 		"module.virtualnetwork_test.azapi_resource.peering_hub_outbound[\"primary\"]",
 		"module.virtualnetwork_test.azapi_resource.peering_hub_outbound[\"secondary\"]",
-		"module.virtualnetwork_test.azapi_update_resource.vnet[\"primary\"]",
-		"module.virtualnetwork_test.azapi_update_resource.vnet[\"secondary\"]",
 	}
 	for _, r := range resources {
 		check.InPlan(test.PlanStruct).That(r).Exists().ErrorIsNil(t)
@@ -158,8 +152,6 @@ func TestDeployVirtualNetworkValidUniDirectionalVnetPeering(t *testing.T) {
 		"module.virtualnetwork_test.azapi_resource.vnet[\"secondary\"]",
 		"module.virtualnetwork_test.azapi_resource.peering_hub_inbound[\"primary\"]",
 		"module.virtualnetwork_test.azapi_resource.peering_hub_outbound[\"secondary\"]",
-		"module.virtualnetwork_test.azapi_update_resource.vnet[\"primary\"]",
-		"module.virtualnetwork_test.azapi_update_resource.vnet[\"secondary\"]",
 	}
 	for _, r := range resources {
 		check.InPlan(test.PlanStruct).That(r).Exists().ErrorIsNil(t)
@@ -195,8 +187,6 @@ func TestDeployVirtualNetworkValidVhubConnection(t *testing.T) {
 		"module.virtualnetwork_test.azapi_resource.vnet[\"secondary\"]",
 		"module.virtualnetwork_test.azapi_resource.vhubconnection[\"primary\"]",
 		"module.virtualnetwork_test.azapi_resource.vhubconnection[\"secondary\"]",
-		"module.virtualnetwork_test.azapi_update_resource.vnet[\"primary\"]",
-		"module.virtualnetwork_test.azapi_update_resource.vnet[\"secondary\"]",
 	}
 	for _, r := range resources {
 		check.InPlan(test.PlanStruct).That(r).Exists().ErrorIsNil(t)
@@ -304,8 +294,6 @@ func TestDeployVirtualNetworkValidMeshPeering(t *testing.T) {
 	resources := []string{
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.peering_mesh[\"primary-secondary\"]",
 		"azapi_resource.peering_mesh[\"secondary-primary\"]",
 	}

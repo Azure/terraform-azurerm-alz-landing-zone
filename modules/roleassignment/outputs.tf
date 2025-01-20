@@ -1,4 +1,4 @@
-output "role_assignment_id" {
+output "role_assignment_resource_id" {
   description = "The Azure resource id of the created role assignment."
   value       = azurerm_role_assignment.this.id
 }

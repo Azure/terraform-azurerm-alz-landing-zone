@@ -8,6 +8,6 @@ module "virtualnetwork" {
   location         = var.location
 
   depends_on = [
-    module.resourcegroup_networkwatcherrg,
+    module.resourcegroup
   ]
 }

@@ -7,7 +7,7 @@ This wiki contains longer form documentation.
 This module can be used standalone, or combined with the [Azure Landing Zones Terraform module][alz_tf_module] to create a landing zone within the [Azure Landing Zones conceptual architecture][alz_conceptual_arch].
 
 <!-- markdownlint-disable MD033 -->
-<center><img src="img/journey.png" width="60%" /></center>
+<center><img src="img/journey.png" width="60%" alt="Flowchart of the ALZ + Subscription Vending journey" /></center>
 <!-- markdownlint-enable -->
 
 In the above diagram, this module provides the capability to deploy landing zones

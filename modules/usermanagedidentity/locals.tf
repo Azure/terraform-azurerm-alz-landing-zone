@@ -1,3 +1,3 @@
 locals {
-  umi_output = jsondecode(azapi_resource.umi.output)
+  umi_output = azapi_resource.umi.output
 }

@@ -41,7 +41,6 @@ func TestIntegrationHubAndSpoke(t *testing.T) {
 		"module.virtualnetwork[0].azapi_resource.rg_lock[\"primary-rg\"]",
 		"module.virtualnetwork[0].azapi_resource.rg[\"primary-rg\"]",
 		"module.virtualnetwork[0].azapi_resource.vnet[\"primary\"]",
-		"module.virtualnetwork[0].azapi_update_resource.vnet[\"primary\"]",
 	}
 
 	check.InPlan(test.PlanStruct).NumberOfResourcesEquals(len(resources)).ErrorIsNil(t)
@@ -74,7 +73,6 @@ func TestIntegrationVwan(t *testing.T) {
 		"module.virtualnetwork[0].azapi_resource.vhubconnection[\"primary\"]",
 		"module.virtualnetwork[0].azapi_resource.rg[\"primary-rg\"]",
 		"module.virtualnetwork[0].azapi_resource.vnet[\"primary\"]",
-		"module.virtualnetwork[0].azapi_update_resource.vnet[\"primary\"]",
 	}
 
 	check.InPlan(test.PlanStruct).NumberOfResourcesEquals(len(resources)).ErrorIsNil(t)
@@ -144,7 +142,6 @@ func TestIntegrationHubAndSpokeExistingSubscription(t *testing.T) {
 		"module.virtualnetwork[0].azapi_resource.peering_hub_inbound[\"primary\"]",
 		"module.virtualnetwork[0].azapi_resource.peering_hub_outbound[\"primary\"]",
 		"module.virtualnetwork[0].azapi_resource.vnet[\"primary\"]",
-		"module.virtualnetwork[0].azapi_update_resource.vnet[\"primary\"]",
 		"module.virtualnetwork[0].azapi_resource.rg[\"primary-rg\"]",
 	}
 
@@ -181,7 +178,6 @@ func TestIntegrationHubAndSpokeExistingSubscriptionWithMgAssoc(t *testing.T) {
 		"module.virtualnetwork[0].azapi_resource.peering_hub_inbound[\"primary\"]",
 		"module.virtualnetwork[0].azapi_resource.peering_hub_outbound[\"primary\"]",
 		"module.virtualnetwork[0].azapi_resource.vnet[\"primary\"]",
-		"module.virtualnetwork[0].azapi_update_resource.vnet[\"primary\"]",
 		"module.virtualnetwork[0].azapi_resource.rg[\"primary-rg\"]",
 		"module.subscription[0].azurerm_management_group_subscription_association.this[0]",
 	}
@@ -208,7 +204,6 @@ func TestIntegrationWithYaml(t *testing.T) {
 
 	resources := []string{
 		"module.lz_vending[\"%s\"].azapi_resource.telemetry_root[0]",
-		"module.lz_vending[\"%s\"].module.virtualnetwork[0].azapi_update_resource.vnet[\"primary\"]",
 		"module.lz_vending[\"%s\"].module.virtualnetwork[0].azapi_resource.vnet[\"primary\"]",
 		"module.lz_vending[\"%s\"].module.virtualnetwork[0].azapi_resource.rg_lock[\"primary-rg\"]",
 		"module.lz_vending[\"%s\"].module.virtualnetwork[0].azapi_resource.rg[\"primary-rg\"]",
@@ -260,12 +255,15 @@ func TestIntegrationResourceGroups(t *testing.T) {
 	t.Parallel()
 
 	v := map[string]any{
-		"subscription_id":                        "00000000-0000-0000-0000-000000000000",
-		"location":                               "westeurope",
-		"network_watcher_resource_group_enabled": true,
-		"resource_group_creation_enabled":        true,
-		"disable_telemetry":                      true,
+		"subscription_id":                 "00000000-0000-0000-0000-000000000000",
+		"location":                        "westeurope",
+		"resource_group_creation_enabled": true,
+		"disable_telemetry":               true,
 		"resource_groups": map[string]any{
+			"NetworkWatcherRG": map[string]any{
+				"location": "westeurope",
+				"name":     "NetworkWatcherRG",
+			},
 			"rg1": map[string]any{
 				"location": "westeurope",
 				"name":     "rg1",
@@ -279,7 +277,7 @@ func TestIntegrationResourceGroups(t *testing.T) {
 
 	resources := []string{
 		`module.resourcegroup["rg1"].azapi_resource.rg`,
-		`module.resourcegroup_networkwatcherrg[0].azapi_resource.rg`,
+		`module.resourcegroup["NetworkWatcherRG"].azapi_resource.rg`,
 	}
 
 	check.InPlan(test.PlanStruct).NumberOfResourcesEquals(len(resources)).ErrorIsNil(t)

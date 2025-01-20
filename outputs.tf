@@ -57,3 +57,18 @@ Value will be null if `var.umi_enabled` is false.
 DESCRIPTION
   value       = one(module.usermanagedidentity) != null ? one(module.usermanagedidentity).umi_id : null
 }
+
+output "resource_group_resource_ids" {
+  description = "The created resource group IDs, expressed as a map."
+  value       = { for k, v in module.resourcegroup : k => v.resource_group_resource_id }
+}
+
+output "budget_resource_id" {
+  description = "The created budget resource IDs, expressed as a map."
+  value       = { for k, v in module.budget : k => v.budget_resource_id }
+}
+
+output "route_table_resource_ids" {
+  description = "The created route table resource IDs, expressed as a map."
+  value       = { for k, v in module.routetable : k => v.route_table_resource_id }
+}

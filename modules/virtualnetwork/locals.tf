@@ -102,3 +102,50 @@ locals {
     } if v.resource_group_creation_enabled
   ])
 }
+
+# virtual network body properties
+locals {
+  vnet_body_properties = {
+    for k, v in var.virtual_networks : k =>
+    merge(
+      {
+        addressSpace = {
+          addressPrefixes = v.address_space
+        }
+        dhcpOptions = {
+          dnsServers = v.dns_servers
+        }
+      },
+      v.ddos_protection_enabled ? {
+        ddosProtectionPlan = {
+          id = v.ddos_protection_plan_id
+        }
+        enableDdosProtection = true
+      } : null
+    )
+  }
+}
+
+locals {
+  vhubconnection_body_properties = {
+    for k, v in var.virtual_networks : k =>
+    merge({
+      enableInternetSecurity = v.vwan_security_configuration.secure_internet_traffic
+      remoteVirtualNetwork = {
+        id = local.virtual_network_resource_ids[k]
+      }
+      },
+      # Only supply routingConfiguration if routing_intent_enabled is set to false
+      v.vwan_security_configuration.routing_intent_enabled ? {} : {
+        routingConfiguration = {
+          associatedRouteTable = {
+            id = v.vwan_associated_routetable_resource_id != "" ? v.vwan_associated_routetable_resource_id : "${v.vwan_hub_resource_id}/hubRouteTables/defaultRouteTable"
+          }
+          propagatedRouteTables = {
+            ids    = v.vwan_security_configuration.secure_private_traffic ? local.vwan_propagated_noneroutetables_resource_ids[k] : local.vwan_propagated_routetables_resource_ids[k]
+            labels = v.vwan_security_configuration.secure_private_traffic ? ["none"] : local.vwan_propagated_routetables_labels[k]
+          }
+        }
+    }) if v.vwan_connection_enabled
+  }
+}

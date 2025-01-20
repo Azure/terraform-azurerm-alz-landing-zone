@@ -34,9 +34,9 @@ module "budget" {
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.3.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.8)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (>= 1.11.0)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.2)
 
 ## Modules
 
@@ -117,7 +117,11 @@ The following resources are used by this module:
 
 ## Outputs
 
-No outputs.
+The following outputs are exported:
+
+### <a name="output_budget_resource_id"></a> [budget\_resource\_id](#output\_budget\_resource\_id)
+
+Description: The Azure resource id of the created budget.
 
 <!-- markdownlint-enable -->
 <!-- END_TF_DOCS -->

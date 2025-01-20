@@ -10,13 +10,13 @@ resource "azapi_resource" "vwan" {
   name      = "${var.virtual_networks["primary"].name}-vwan"
   location  = azapi_resource.rg.location
   parent_id = azapi_resource.rg.id
-  body = jsonencode({
+  body = {
     properties = {
       type                       = "Standard"
       allowBranchToBranchTraffic = true
       disableVpnEncryption       = false
     }
-  })
+  }
 }
 
 resource "azapi_resource" "fwpol" {
@@ -24,14 +24,14 @@ resource "azapi_resource" "fwpol" {
   parent_id = azapi_resource.rg.id
   location  = azapi_resource.rg.location
   name      = "fwpolicy"
-  body = jsonencode({
+  body = {
     properties = {
       sku = {
         tier = "Standard"
       }
       threatIntelMode = "Alert"
     }
-  })
+  }
 }
 
 resource "azapi_resource" "vhub" {
@@ -39,7 +39,7 @@ resource "azapi_resource" "vhub" {
   name      = "${var.virtual_networks["primary"].name}-vhub"
   location  = azapi_resource.vwan.location
   parent_id = azapi_resource.rg.id
-  body = jsonencode({
+  body = {
     properties = {
       addressPrefix = "192.168.100.0/23"
       sku           = "Standard"
@@ -47,7 +47,7 @@ resource "azapi_resource" "vhub" {
         id = azapi_resource.vwan.id
       }
     }
-  })
+  }
 }
 
 resource "azapi_resource" "hubfw" {
@@ -55,7 +55,7 @@ resource "azapi_resource" "hubfw" {
   name      = "hubfw"
   location  = azapi_resource.rg.location
   parent_id = azapi_resource.rg.id
-  body = jsonencode({
+  body = {
     properties = {
       sku = {
         name = "AZFW_Hub"
@@ -73,14 +73,14 @@ resource "azapi_resource" "hubfw" {
         id = azapi_resource.fwpol.id
       }
     }
-  })
+  }
 }
 
 resource "azapi_resource" "hubfw_routingintent" {
   type      = "Microsoft.Network/virtualHubs/routingIntent@2023-09-01"
   parent_id = azapi_resource.vhub.id
   name      = "hubfw-routingintent"
-  body = jsonencode({
+  body = {
     properties = {
       routingPolicies = [
         {
@@ -95,7 +95,7 @@ resource "azapi_resource" "hubfw_routingintent" {
         }
       ]
     }
-  })
+  }
 
 }
 

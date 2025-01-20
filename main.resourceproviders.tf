@@ -7,7 +7,6 @@ module "resourceproviders" {
 
   depends_on = [
     module.resourcegroup,
-    module.resourcegroup_networkwatcherrg,
     module.roleassignment,
     module.roleassignment_umi,
     module.subscription,

@@ -136,9 +136,9 @@ module "lz_vending" {
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.3)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.8)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 1.4)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.2)
 
 ## Modules
 
@@ -151,12 +151,6 @@ Source: ./modules/budget
 Version:
 
 ### <a name="module_resourcegroup"></a> [resourcegroup](#module\_resourcegroup)
-
-Source: ./modules/resourcegroup
-
-Version:
-
-### <a name="module_resourcegroup_networkwatcherrg"></a> [resourcegroup\_networkwatcherrg](#module\_resourcegroup\_networkwatcherrg)
 
 Source: ./modules/resourcegroup
 
@@ -177,6 +171,12 @@ Version:
 ### <a name="module_roleassignment_umi"></a> [roleassignment\_umi](#module\_roleassignment\_umi)
 
 Source: ./modules/roleassignment
+
+Version:
+
+### <a name="module_routetable"></a> [routetable](#module\_routetable)
+
+Source: ./modules/routetable
 
 Version:
 
@@ -322,20 +322,6 @@ Type: `bool`
 
 Default: `false`
 
-### <a name="input_network_watcher_resource_group_enabled"></a> [network\_watcher\_resource\_group\_enabled](#input\_network\_watcher\_resource\_group\_enabled)
-
-Description: Create `NetworkWatcherRG` in the subscription.
-
-Although this resource group is created automatically by Azure,  
-it is not managed by Terraform and therefore can impede the subscription cancellation process.
-
-Enabling this variable will create the resource group in the subscription and allow Terraform to manage it,  
-which includes destroying the resource (and all resources within it).
-
-Type: `bool`
-
-Default: `false`
-
 ### <a name="input_resource_group_creation_enabled"></a> [resource\_group\_creation\_enabled](#input\_resource\_group\_creation\_enabled)
 
 Description: Whether to create additional resource groups in the target subscription. Requires `var.resource_groups`.
@@ -352,7 +338,7 @@ Description: A map of the resource groups to create. The value is an object with
 - `location` - the location of the resource group
 - `tags` - (optional) a map of type string
 
-> Do not include the `NetworkWatcherRG` resource group in this map if you have enabled `var.network_watcher_resource_group_enabled`.
+We recommend that you include an entry to create the NetworkWatcherRG resource group so that this is managed by Terraform.
 
 Type:
 
@@ -417,6 +403,50 @@ map(object({
     relative_scope    = optional(string, ""),
     condition         = optional(string, ""),
     condition_version = optional(string, ""),
+  }))
+```
+
+Default: `{}`
+
+### <a name="input_route_table_enabled"></a> [route\_table\_enabled](#input\_route\_table\_enabled)
+
+Description: Whether to create route tables and routes in the target subscription. Requires `var.route_tables`.
+
+Type: `bool`
+
+Default: `false`
+
+### <a name="input_route_tables"></a> [route\_tables](#input\_route\_tables)
+
+Description: A map defining route tables and their associated routes to be created:
+
+- `name` (required): The name of the route table.
+- `location` (required): The location of the resource group.
+- `resource_group_name` (required): The name of the resource group.
+- `bgp_route_propagation_enabled` (optional): Boolean that controls whether routes learned by BGP are propagated to the route table. Default is `true`.
+- `tags` (optional): A map of key-value pairs for tags associated with the route table.
+- `routes` (optional): A map defining routes for the route table. Each route object has the following properties:
+  - `name` (required): The name of the route.
+  - `address_prefix` (required): The address prefix for the route.
+  - `next_hop_type` (required): The type of next hop for the route.
+  - `next_hop_in_ip_address` (required): The next hop IP address for the route.
+
+Type:
+
+```hcl
+map(object({
+    name                          = string
+    location                      = string
+    resource_group_name           = string
+    bgp_route_propagation_enabled = optional(bool, true)
+    tags                          = optional(map(string))
+
+    routes = optional(map(object({
+      name                   = string
+      address_prefix         = string
+      next_hop_type          = string
+      next_hop_in_ip_address = string
+    })))
   }))
 ```
 
@@ -1026,10 +1056,22 @@ The following resources are used by this module:
 
 The following outputs are exported:
 
+### <a name="output_budget_resource_id"></a> [budget\_resource\_id](#output\_budget\_resource\_id)
+
+Description: The created budget resource IDs, expressed as a map.
+
 ### <a name="output_management_group_subscription_association_id"></a> [management\_group\_subscription\_association\_id](#output\_management\_group\_subscription\_association\_id)
 
 Description: The management\_group\_subscription\_association\_id output is the ID of the management group subscription association.  
 Value will be null if `var.subscription_management_group_association_enabled` is false.
+
+### <a name="output_resource_group_resource_ids"></a> [resource\_group\_resource\_ids](#output\_resource\_group\_resource\_ids)
+
+Description: The created resource group IDs, expressed as a map.
+
+### <a name="output_route_table_resource_ids"></a> [route\_table\_resource\_ids](#output\_route\_table\_resource\_ids)
+
+Description: The created route table resource IDs, expressed as a map.
 
 ### <a name="output_subscription_id"></a> [subscription\_id](#output\_subscription\_id)
 

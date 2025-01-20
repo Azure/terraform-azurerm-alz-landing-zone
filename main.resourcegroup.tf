@@ -8,20 +8,15 @@ module "resourcegroup" {
   tags                = each.value.tags
 }
 
-# Resource groups module for network watcher
-module "resourcegroup_networkwatcherrg" {
-  source              = "./modules/resourcegroup"
-  count               = var.network_watcher_resource_group_enabled ? 1 : 0
-  subscription_id     = local.subscription_id
-  location            = var.location
-  resource_group_name = "NetworkWatcherRG"
-  tags                = {}
-}
-
-
-# v3.3.0 introuced networkwatcherrg support,
+# v3.3.0 introduced networkwatcherrg support,
 # this was then moved into a more general resourcegroups module in later versions
 moved {
   from = module.networkwatcherrg[0].azapi_resource.network_watcher_rg
   to   = module.resourcegroup_networkwatcherrg[0].azapi_resource.rg
+}
+
+# v5.0.0 consolidated the resource groups into a single module call
+moved {
+  from = module.resourcegroup_networkwatcherrg[0].azapi_resource.rg
+  to   = module.resourcegroup["NetworkWatcherRG"].azapi_resource.rg
 }

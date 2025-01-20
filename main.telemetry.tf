@@ -6,11 +6,10 @@ resource "azapi_resource" "telemetry_root" {
   name      = local.telem_root_arm_deployment_name
   type      = "Microsoft.Resources/deployments@2021-04-01"
   location  = var.location
-  body = jsonencode({
+  body = {
     properties = {
       mode     = "Incremental"
       template = local.telem_arm_subscription_template
     }
-  })
-  ignore_missing_property = true
+  }
 }

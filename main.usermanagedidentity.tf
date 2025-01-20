@@ -16,4 +16,8 @@ module "usermanagedidentity" {
   federated_credentials_advanced        = var.umi_federated_credentials_advanced
   federated_credentials_github          = var.umi_federated_credentials_github
   federated_credentials_terraform_cloud = var.umi_federated_credentials_terraform_cloud
+
+  depends_on = [
+    module.resourcegroup
+  ]
 }

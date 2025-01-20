@@ -2,6 +2,5 @@
 * @Azure/terraform-azurerm-lz-vending-admins
 # Require admin approval for the following files:
 .github/CODEOWNERS @Azure/terraform-azurerm-lz-vending-admins
-.github/fabricbot.json @Azure/terraform-azurerm-lz-vending-admins
 .github/workflows/ @Azure/terraform-azurerm-lz-vending-admins
 Makefile @Azure/terraform-azurerm-lz-vending-admins

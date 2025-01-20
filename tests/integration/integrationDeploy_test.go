@@ -41,7 +41,6 @@ func TestDeployIntegrationHubAndSpoke(t *testing.T) {
 		fmt.Sprintf("module.lz_vending.module.virtualnetwork[0].azapi_resource.rg_lock[\"%s\"]", name),
 		fmt.Sprintf("module.lz_vending.module.virtualnetwork[0].azapi_resource.rg[\"%s\"]", name),
 		"module.lz_vending.module.virtualnetwork[0].azapi_resource.vnet[\"primary\"]",
-		"module.lz_vending.module.virtualnetwork[0].azapi_update_resource.vnet[\"primary\"]",
 	}
 
 	for _, v := range resources {

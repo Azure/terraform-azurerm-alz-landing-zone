@@ -10,13 +10,13 @@ resource "azapi_resource" "vwan" {
   name      = "${var.virtual_networks["primary"].name}-vwan"
   location  = azapi_resource.rg.location
   parent_id = azapi_resource.rg.id
-  body = jsonencode({
+  body = {
     properties = {
       type                       = "Standard"
       allowBranchToBranchTraffic = true
       disableVpnEncryption       = false
     }
-  })
+  }
 }
 
 resource "azapi_resource" "vhub" {
@@ -24,7 +24,7 @@ resource "azapi_resource" "vhub" {
   name      = "${var.virtual_networks["primary"].name}-vhub"
   location  = azapi_resource.vwan.location
   parent_id = azapi_resource.rg.id
-  body = jsonencode({
+  body = {
     properties = {
       addressPrefix = "192.168.100.0/23"
       sku           = "Standard"
@@ -32,7 +32,7 @@ resource "azapi_resource" "vhub" {
         id = azapi_resource.vwan.id
       }
     }
-  })
+  }
 }
 
 locals {

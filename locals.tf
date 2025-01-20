@@ -28,5 +28,5 @@ locals {
 
   # resource_group_ids is a map of resource groups created, if the module has been enabled.
   # This is used in the outputs.tf file to return the resource group ids.
-  virtual_network_resource_group_ids = var.virtual_network_enabled ? module.virtualnetwork[0].resource_group_ids : {}
+  virtual_network_resource_group_ids = var.virtual_network_enabled ? module.virtualnetwork[0].resource_group_resource_ids : {}
 }

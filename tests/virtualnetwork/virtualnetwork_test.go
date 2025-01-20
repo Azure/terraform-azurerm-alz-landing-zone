@@ -31,8 +31,6 @@ func TestVirtualNetworkCreateValid(t *testing.T) {
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"primary-rg\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 	}
@@ -70,7 +68,7 @@ func TestVirtualNetworkCreateValidWithCustomDns(t *testing.T) {
 	defer test.Cleanup()
 
 	// want 8 resources, like TestVirtualNetworkCreateValid
-	check.InPlan(test.PlanStruct).NumberOfResourcesEquals(8).ErrorIsNilFatal(t)
+	check.InPlan(test.PlanStruct).NumberOfResourcesEquals(6).ErrorIsNilFatal(t)
 
 	// Loop through each virtual network and check the values
 	vns := v["virtual_networks"].(map[string]map[string]any)
@@ -100,7 +98,7 @@ func TestVirtualNetworkCreateValidWithTags(t *testing.T) {
 	defer test.Cleanup()
 
 	// We want 8 resources here, same as TestVirtualNetworkCreateValid test
-	check.InPlan(test.PlanStruct).NumberOfResourcesEquals(8).ErrorIsNilFatal(t)
+	check.InPlan(test.PlanStruct).NumberOfResourcesEquals(6).ErrorIsNilFatal(t)
 
 	check.InPlan(test.PlanStruct).That("azapi_resource.vnet[\"primary\"]").Key("tags").HasValue(primaryvnet["tags"]).ErrorIsNil(t)
 	check.InPlan(test.PlanStruct).That("azapi_resource.rg[\"primary-rg\"]").Key("tags").HasValue(primaryvnet["resource_group_tags"]).ErrorIsNil(t)
@@ -124,7 +122,7 @@ func TestVirtualNetworkCreateValidWithMeshPeering(t *testing.T) {
 
 	// We want 10 resources here, 2 more than the TestVirtualNetworkCreateValid test
 	// The additional two are the inbound & outbound peering
-	check.InPlan(test.PlanStruct).NumberOfResourcesEquals(10).ErrorIsNilFatal(t)
+	check.InPlan(test.PlanStruct).NumberOfResourcesEquals(8).ErrorIsNilFatal(t)
 
 	peer1 := "azapi_resource.peering_mesh[\"primary-secondary\"]"
 	check.InPlan(test.PlanStruct).That(peer1).Key("body").Query("properties.allowForwardedTraffic").HasValue(false).ErrorIsNil(t)
@@ -162,8 +160,6 @@ func TestVirtualNetworkCreateValidInvalidMeshPeering(t *testing.T) {
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"primary-rg\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 	}
@@ -194,8 +190,6 @@ func TestVirtualNetworkCreateValidSameRg(t *testing.T) {
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 	}
 	check.InPlan(test.PlanStruct).NumberOfResourcesEquals(len(resources)).ErrorIsNilFatal(t)
@@ -225,8 +219,6 @@ func TestVirtualNetworkCreateValidSameRgSameLocation(t *testing.T) {
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 	}
 	check.InPlan(test.PlanStruct).NumberOfResourcesEquals(len(resources)).ErrorIsNilFatal(t)
@@ -259,8 +251,6 @@ func TestVirtualNetworkCreateValidWithHubPeering(t *testing.T) {
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"primary-rg\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 		"azapi_resource.peering_hub_outbound[\"primary\"]",
@@ -313,8 +303,6 @@ func TestVirtualNetworkCreateValidWithHubPeeringCustomNames(t *testing.T) {
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"primary-rg\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 		"azapi_resource.peering_hub_outbound[\"primary\"]",
@@ -361,8 +349,6 @@ func TestVirtualNetworkCreateValidWithOnlyToHubPeering(t *testing.T) {
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"primary-rg\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 		"azapi_resource.peering_hub_outbound[\"primary\"]",
@@ -400,8 +386,6 @@ func TestVirtualNetworkCreateValidWithOnlyFromHubPeering(t *testing.T) {
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"primary-rg\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 		"azapi_resource.peering_hub_inbound[\"primary\"]",
@@ -437,8 +421,6 @@ func TestVirtualNetworkCreateValidWithPeeringUseRemoteGatewaysDisabled(t *testin
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"primary-rg\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 		"azapi_resource.peering_hub_outbound[\"primary\"]",
@@ -468,6 +450,13 @@ func TestVirtualNetworkCreateValidWithVhub(t *testing.T) {
 	primaryvnet["vwan_hub_resource_id"] = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_rg/providers/Microsoft.Network/virtualHubs/te.st-hub"
 	primaryvnet["vwan_connection_enabled"] = true
 
+	secondaryvnet := v["virtual_networks"].(map[string]map[string]any)["secondary"]
+	secondaryvnet["vwan_hub_resource_id"] = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_rg/providers/Microsoft.Network/virtualHubs/te.st-hub"
+	secondaryvnet["vwan_connection_enabled"] = true
+	secondaryvnet["vwan_security_configuration"] = map[string]any{
+		"routing_intent_enabled": true,
+	}
+
 	test, err := setuptest.Dirs(moduleDir, "").WithVars(v).InitPlanShowWithPrepFunc(t, utils.AzureRmAndRequiredProviders)
 	require.NoError(t, err)
 	defer test.Cleanup()
@@ -479,11 +468,10 @@ func TestVirtualNetworkCreateValidWithVhub(t *testing.T) {
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"primary-rg\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 		"azapi_resource.vhubconnection[\"primary\"]",
+		"azapi_resource.vhubconnection_routing_intent[\"secondary\"]",
 	}
 	check.InPlan(test.PlanStruct).NumberOfResourcesEquals(len(resources)).ErrorIsNilFatal(t)
 
@@ -531,8 +519,6 @@ func TestVirtualNetworkCreateValidWithVhubCustomRouting(t *testing.T) {
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"primary-rg\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 		"azapi_resource.vhubconnection[\"primary\"]",
@@ -576,8 +562,6 @@ func TestVirtualNetworkCreateValidWithVhubSecureInternetTraffic(t *testing.T) {
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"primary-rg\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 		"azapi_resource.vhubconnection[\"primary\"]",
@@ -618,8 +602,6 @@ func TestVirtualNetworkCreateValidWithVhubSecurePrivateTraffic(t *testing.T) {
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"primary-rg\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 		"azapi_resource.vhubconnection[\"primary\"]",
@@ -681,8 +663,6 @@ func TestVirtualNetworkCreateValidWithVhubSecureInternetAndPrivateTraffic(t *tes
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"primary-rg\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 		"azapi_resource.vhubconnection[\"primary\"]",
@@ -744,11 +724,9 @@ func TestVirtualNetworkCreateValidWithVhubRoutingIntentEnabled(t *testing.T) {
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"primary-rg\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
-		"azapi_resource.vhubconnection[\"primary\"]",
+		"azapi_resource.vhubconnection_routing_intent[\"primary\"]",
 	}
 	check.InPlan(test.PlanStruct).NumberOfResourcesEquals(len(resources)).ErrorIsNilFatal(t)
 
@@ -840,15 +818,12 @@ func TestVirtualNetworkDdosProtection(t *testing.T) {
 		"azapi_resource.rg[\"secondary-rg\"]",
 		"azapi_resource.vnet[\"primary\"]",
 		"azapi_resource.vnet[\"secondary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"secondary\"]",
 		"azapi_resource.rg_lock[\"primary-rg\"]",
 		"azapi_resource.rg_lock[\"secondary-rg\"]",
 	}
 
 	vnetresources := []string{
 		"azapi_resource.vnet[\"primary\"]",
-		"azapi_update_resource.vnet[\"primary\"]",
 	}
 
 	t.Run("Enabled", func(t *testing.T) {

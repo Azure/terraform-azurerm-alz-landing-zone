@@ -3,7 +3,6 @@
 module "roleassignment" {
   source = "./modules/roleassignment"
   depends_on = [
-    module.resourcegroup_networkwatcherrg,
     module.resourcegroup,
     module.subscription,
     module.usermanagedidentity,
@@ -22,7 +21,6 @@ module "roleassignment" {
 module "roleassignment_umi" {
   source = "./modules/roleassignment"
   depends_on = [
-    module.resourcegroup_networkwatcherrg,
     module.resourcegroup,
     module.subscription,
     module.usermanagedidentity,

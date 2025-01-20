@@ -10,7 +10,7 @@ resource "azapi_resource" "hub" {
   name      = "${var.virtual_networks["primary"].name}-hub"
   parent_id = azapi_resource.rg.id
   location  = azapi_resource.rg.location
-  body = jsonencode({
+  body = {
     properties = {
       addressSpace = {
         addressPrefixes = [
@@ -32,7 +32,7 @@ resource "azapi_resource" "hub" {
         }
       ]
     }
-  })
+  }
 }
 
 locals {

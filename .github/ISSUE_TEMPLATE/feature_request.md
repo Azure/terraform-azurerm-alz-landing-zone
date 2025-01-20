@@ -1,7 +1,7 @@
 ---
 name: "Feature request \U0001F680"
 about: Suggest an idea for this project
-title: 'feat:'
+title: 'feat: '
 assignees: ''
 ---
 <!--- Please keep this note for the community --->

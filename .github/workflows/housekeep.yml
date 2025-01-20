@@ -14,14 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Azure login
-        uses: azure/login@v2
+        uses: azure/CLI@089eac9d8cc39f5d003e94f8b65efc51076c9cbd # v2.1.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           allow-no-subscriptions: true
 
       - name: Azure cancel subscriptions
-        uses: azure/CLI@v2
+        uses: azure/CLI@089eac9d8cc39f5d003e94f8b65efc51076c9cbd # v2.1.0
         continue-on-error: true
         with:
           inlineScript: |
@@ -31,7 +31,7 @@ jobs:
             az account subscription list | jq -r '.[] | select(.state == "Enabled") | select(.displayName | test("^testdeploy.*")) | .subscriptionId' | xargs -n1 -I% az account subscription cancel --yes --id %
             echo "==> Done cancelling subscriptions"
       - name: Azure logout
-        uses: azure/CLI@v2
+        uses: azure/CLI@089eac9d8cc39f5d003e94f8b65efc51076c9cbd # v2.1.0
         if: always()
         with:
           inlineScript: |
@@ -44,14 +44,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Azure login
-        uses: azure/login@v2
+        uses: azure/CLI@089eac9d8cc39f5d003e94f8b65efc51076c9cbd # v2.1.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           allow-no-subscriptions: true
 
       - name: Azure delete subscription aliases
-        uses: azure/CLI@v2
+        uses: azure/CLI@089eac9d8cc39f5d003e94f8b65efc51076c9cbd # v2.1.0
         continue-on-error: true
         with:
           inlineScript: |
@@ -61,7 +61,7 @@ jobs:
             az rest --method GET --uri '/providers/Microsoft.Subscription/aliases/?api-version=2021-10-01' | jq -r '.value[] | select(.name | test("^testdeploy")) | .name' | xargs -n1 -I% az rest --method DELETE --uri '/providers/Microsoft.Subscription/aliases/%?api-version=2021-10-01'
             echo "==> Done deleting subscription aliases"
       - name: Azure logout
-        uses: azure/CLI@v2
+        uses: azure/CLI@089eac9d8cc39f5d003e94f8b65efc51076c9cbd # v2.1.0
         if: always()
         with:
           inlineScript: |
@@ -74,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Azure login
-        uses: azure/login@v2
+        uses: azure/CLI@089eac9d8cc39f5d003e94f8b65efc51076c9cbd # v2.1.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -89,14 +89,14 @@ jobs:
               echo "==> removing locks"
               az lock list | jq '.[].id' | xargs az lock delete --ids
             fi
-            
+
             echo "==> Deleting the following resource groups:"
             az group list | jq -r '.[] | select(.name | test("^testdeploy-")) | .name'
             az group list | jq -r '.[] | select(.name | test("^testdeploy-")) | .name' | xargs -I% -P5 az group delete --yes --name %
             echo "==> Done deleting resource groups"
 
       - name: Azure logout
-        uses: azure/CLI@v2
+        uses: azure/CLI@089eac9d8cc39f5d003e94f8b65efc51076c9cbd # v2.1.0
         if: always()
         with:
           inlineScript: |

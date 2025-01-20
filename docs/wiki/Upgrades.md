@@ -75,3 +75,48 @@ module "lz_vending" {
   }
 }
 ```
+
+## Upgrading from v4.x to v5.x
+
+###  Terraform version
+
+We now require a minimum of Terraform version 1.8.
+
+### Provider Versions
+
+We now require a minimum of AzureRM version 4.0 and AzAPI version 2.2.
+
+### Resource Groups
+
+We have removed the boolean input variable to create the network watcher resource group.
+Instead, use `var.resource_groups` to specify the resource groups to create.
+
+We have used the `moved {}` block to move the resource in state.
+If you previously deployed the network watcher resource group, please modify the value of `var.resource_groups` to include the existing resource group. The key ***must*** be `NetworkWatcherRG` You can use the following example:
+
+```hcl
+resource_groups = {
+  NetworkWatcherRG = {
+    name     = "NetworkWatcherRG"
+    location = "your-location"
+    tags     = {} # add tags here
+  }
+}
+```
+
+## Virtual WAN
+
+When joining virtual networks to a Virtual WAN hub, the behaviour with routing intent has changed.
+Previously the AzAPI provider allowed us to use `ignore_body_properties` to dynamically ignore parts of the resource body
+With AzAPI v2 this is no longer possible, so we have to use the `lifecycle` block to ignore changes.
+However, as ignore changes is not able to be user configurable, we have had to split the virtual hub connections into two separate resources.
+
+In order to avoid destroying and re-creating the virtual hub connections, you will have to use the `moved {}` block to move the resource in state.
+We are unable to do this for you because we do not know the specific instances of the resources that require moving.
+
+```hcl
+moved {
+  from = module.YOUR_MODULE_ALIAS.module.virtualnetwork.azapi_resource.vhubconnection["instance_name"]
+  to   = module.YOUR_MODULE_ALIAS.module.virtualnetwork.azapi_resource.vhubconnection_routing_intent["instance_name"]
+}
+```
