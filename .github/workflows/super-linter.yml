@@ -58,7 +58,7 @@ jobs:
           go-version-file: tests/go.mod
           cache-dependency-path: tests/go.sum
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v6
         with:
           version: v1.55.2
           working-directory: ${{ github.workspace }}/tests
